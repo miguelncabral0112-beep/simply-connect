@@ -1,24 +1,33 @@
 # Simply Connect
+Plataforma SaaS de prospecção B2B para encontrar empresas reais, organizar leads e acompanhar o processo comercial.
 
-oi
+## Stack
+- React + TypeScript + TanStack Start
+- Tailwind CSS v4 e Lucide
+- Supabase Auth, PostgreSQL, RLS e Edge Functions
+- Google Places API (New)
+- WhatsApp por link oficial, contato manual
 
-This project was built with [Lovable](https://lovable.dev).
+## Desenvolvimento local
+```sh
+bun install
+cp .env.example .env
+bun run dev
+```
+Configure `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`. Nunca coloque service role do Supabase ou chave privada do Google em variáveis `VITE_*`.
 
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/5abac48c-1dcc-4137-96f2-51e212d98ae1).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Supabase
+1. Crie um projeto Supabase.
+2. Execute `supabase/migrations/202610080001_init.sql` no SQL Editor.
+3. Configure URL e chave anon/publishable no frontend.
+4. Publique `supabase/functions/search-places`.
+5. Configure o secret `GOOGLE_PLACES_API_KEY` e habilite Google Places API (New).
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+supabase secrets set GOOGLE_PLACES_API_KEY=YOUR_KEY
+supabase functions deploy search-places
 ```
+
+A busca exige usuário autenticado e usa a API oficial. A cobertura depende do provedor. Website vazio significa apenas “Site não informado no Google”, não prova ausência de site. RLS isola os dados por usuário. Abrir o WhatsApp não confirma envio. Sem credenciais, o app informa a configuração pendente em vez de inventar resultados.
+
+A base inicial de busca e CRM está implementada. Histórico detalhado, tarefas agendadas, auditoria técnica de sites, exportação e métricas avançadas são etapas posteriores.
