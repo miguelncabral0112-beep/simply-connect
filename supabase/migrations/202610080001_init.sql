@@ -22,10 +22,10 @@ drop trigger if exists on_auth_user_created on auth.users; create trigger on_aut
 alter table public.profiles enable row level security; alter table public.leads enable row level security; alter table public.lead_notes enable row level security; alter table public.lead_activities enable row level security; alter table public.deals enable row level security; alter table public.follow_ups enable row level security; alter table public.search_history enable row level security; alter table public.user_preferences enable row level security;
 create policy "profiles own row" on public.profiles for all to authenticated using(id=auth.uid()) with check(id=auth.uid());
 create policy "leads own rows" on public.leads for all to authenticated using(user_id=auth.uid()) with check(user_id=auth.uid());
-create policy "notes own rows" on public.lead_notes for all to authenticated using(user_id=auth.uid()) with check(user_id=auth.uid());
-create policy "activities own rows" on public.lead_activities for all to authenticated using(user_id=auth.uid()) with check(user_id=auth.uid());
-create policy "deals own rows" on public.deals for all to authenticated using(user_id=auth.uid()) with check(user_id=auth.uid());
-create policy "followups own rows" on public.follow_ups for all to authenticated using(user_id=auth.uid()) with check(user_id=auth.uid());
+create policy "notes own rows" on public.lead_notes for all to authenticated using(user_id=auth.uid() and exists(select 1 from public.leads l where l.id=lead_id and l.user_id=auth.uid())) with check(user_id=auth.uid() and exists(select 1 from public.leads l where l.id=lead_id and l.user_id=auth.uid()));
+create policy "activities own rows" on public.lead_activities for all to authenticated using(user_id=auth.uid() and exists(select 1 from public.leads l where l.id=lead_id and l.user_id=auth.uid())) with check(user_id=auth.uid() and exists(select 1 from public.leads l where l.id=lead_id and l.user_id=auth.uid()));
+create policy "deals own rows" on public.deals for all to authenticated using(user_id=auth.uid() and exists(select 1 from public.leads l where l.id=lead_id and l.user_id=auth.uid())) with check(user_id=auth.uid() and exists(select 1 from public.leads l where l.id=lead_id and l.user_id=auth.uid()));
+create policy "followups own rows" on public.follow_ups for all to authenticated using(user_id=auth.uid() and exists(select 1 from public.leads l where l.id=lead_id and l.user_id=auth.uid())) with check(user_id=auth.uid() and exists(select 1 from public.leads l where l.id=lead_id and l.user_id=auth.uid()));
 create policy "search history own rows" on public.search_history for all to authenticated using(user_id=auth.uid()) with check(user_id=auth.uid());
 create policy "preferences own row" on public.user_preferences for all to authenticated using(user_id=auth.uid()) with check(user_id=auth.uid());
 grant usage on schema public to authenticated;
